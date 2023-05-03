@@ -1,16 +1,31 @@
 package main
 
 import (
-  "net/http"
-  "github.com/gin-gonic/gin"
+	"circle-of-life/internal/core/db"
+	"circle-of-life/internal/user"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-  r := gin.Default()
+	db.ConnectDB()
 
-  r.GET("/", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{"data": "hello world"})    
-  })
+    err := db.DB.AutoMigrate(user.User{})
+    if err != nil {
+        log.Fatal(err.Error())
+    }
 
-  r.Run()
+    r := gin.Default()
+
+    api := r.Group("/api")
+
+    api.GET("/", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{"data": "hello world"})    
+    })
+
+    api.POST("/register", user.Register)
+
+    r.Run()
 }
