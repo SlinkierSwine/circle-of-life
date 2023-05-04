@@ -1,6 +1,7 @@
 package main
 
 import (
+	"circle-of-life/internal/circle"
 	"circle-of-life/internal/core/db"
 	"circle-of-life/internal/user"
 	"log"
@@ -12,7 +13,7 @@ import (
 func main() {
 	db.ConnectDB()
 
-    err := db.DB.AutoMigrate(user.User{})
+    err := db.DB.AutoMigrate(user.User{}, circle.Circle{}, circle.Sector{})
     if err != nil {
         log.Fatal(err.Error())
     }
@@ -30,6 +31,7 @@ func main() {
     public.POST("/login", user.Login)
 
     protected := r.Group("/api")
+
     // User
     protected.Use(user.JwtAuthMiddleware())
     protected.GET("/me", user.CurrentUser)
