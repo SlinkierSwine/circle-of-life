@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
+
 func (u *User) SaveUser() (*User, error) {
 
 	var err error
@@ -19,6 +20,7 @@ func (u *User) SaveUser() (*User, error) {
 	}
 	return u, nil
 }
+
 
 func (u *User) BeforeSave(tx *gorm.DB) error {
 
@@ -34,4 +36,15 @@ func (u *User) BeforeSave(tx *gorm.DB) error {
 
 	return nil
 
+}
+
+
+func (u *User) ToRepresentation() map[string]interface{} {
+    data := map[string]interface{} {
+        "id": u.ID,
+        "username": u.Username,
+        "created_at": u.CreatedAt,
+        "updated_at": u.UpdatedAt,
+    }
+    return data
 }

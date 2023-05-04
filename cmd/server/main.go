@@ -19,13 +19,20 @@ func main() {
 
     r := gin.Default()
 
-    api := r.Group("/api")
+    public := r.Group("/api")
 
-    api.GET("/", func(c *gin.Context) {
+    public.GET("/", func(c *gin.Context) {
         c.JSON(http.StatusOK, gin.H{"data": "hello world"})    
     })
 
-    api.POST("/register", user.Register)
+    // Auth
+    public.POST("/register", user.Register)
+    public.POST("/login", user.Login)
+
+    protected := r.Group("/api")
+    // User
+    protected.Use(user.JwtAuthMiddleware())
+    protected.GET("/me", user.CurrentUser)
 
     r.Run()
 }
