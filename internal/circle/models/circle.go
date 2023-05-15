@@ -28,7 +28,6 @@ func (c *Circle) SaveCircle() (*Circle, error) {
 func (c *Circle) ToRepresentation() map[string]interface{} {
     sectors := []Sector{}
     db.DB.Joins("JOIN circles on circles.id = sectors.circle_id and circles.id = ?", c.Model.ID).Find(&sectors)
-    // db.DB.Preload("Circle").Find(&sectors).Where("circle_id = ?", c.Model.ID)
     data := map[string]interface{} {
         "ID": c.Model.ID,
         "sectors": sectors,
