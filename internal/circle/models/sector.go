@@ -28,7 +28,7 @@ func (s *Sector) SaveSector() (*Sector, error) {
 
 func (s *Sector) ToRepresentation() map[string]interface{} {
     data := map[string]interface{} {
-        "id": s.Model.ID,
+        "ID": s.Model.ID,
         "name": s.Name,
         "value": s.Value,
         "circle_id": s.CircleID,

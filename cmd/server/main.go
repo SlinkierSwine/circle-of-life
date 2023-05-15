@@ -32,7 +32,7 @@ func main() {
     public.POST("/register", user.Register)
     public.POST("/login", user.Login)
 
-    public.GET("/circle", circle.GetCircle)
+    public.POST("/circle", circle.GetCircle)
     public.POST("/sector", circle.CreateSector)
     public.PUT("/sector", circle.UpdateSector)
 
