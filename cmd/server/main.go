@@ -2,8 +2,10 @@ package main
 
 import (
 	"circle-of-life/internal/circle"
+	circleModels "circle-of-life/internal/circle/models"
 	"circle-of-life/internal/core/db"
 	"circle-of-life/internal/user"
+	userModels "circle-of-life/internal/user/models"
 	"log"
 	"net/http"
 
@@ -13,7 +15,7 @@ import (
 func main() {
 	db.ConnectDB()
 
-    err := db.DB.AutoMigrate(user.User{}, circle.Circle{}, circle.Sector{})
+    err := db.DB.AutoMigrate(userModels.User{}, circleModels.Circle{}, circleModels.Sector{})
     if err != nil {
         log.Fatal(err.Error())
     }
@@ -29,6 +31,10 @@ func main() {
     // Auth
     public.POST("/register", user.Register)
     public.POST("/login", user.Login)
+
+    public.GET("/circle", circle.GetCircle)
+    public.POST("/sector", circle.CreateSector)
+    public.PUT("/sector", circle.UpdateSector)
 
     protected := r.Group("/api")
 

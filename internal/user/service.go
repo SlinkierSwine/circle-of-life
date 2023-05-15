@@ -1,8 +1,10 @@
 package user
 
 import (
+	"circle-of-life/internal/user/models"
 	"circle-of-life/internal/core/db"
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,9 +19,9 @@ func LoginCheck(username string, password string) (string,error) {
 	
 	var err error
 
-	u := User{}
+	u := models.User{}
 
-	err = db.DB.Model(User{}).Where("username = ?", username).Take(&u).Error
+	err = db.DB.Model(models.User{}).Where("username = ?", username).Take(&u).Error
 
 	if err != nil {
 		return "", err
@@ -42,14 +44,24 @@ func LoginCheck(username string, password string) (string,error) {
 }
 
 
-func GetUserByID(uid uint) (User, error) {
+func GetUserByID(uid uint) (models.User, error) {
 
-	var u User
+	var u models.User
 
 	if err := db.DB.First(&u,uid).Error; err != nil {
-		return u, errors.New("User not found!")
+		return u, errors.New(fmt.Sprintf("User not found! %s", err.Error()))
 	}
 	
-	return u,nil
+	return u, nil
 
+}
+
+func GetUserByUsername(username string) (models.User, error) {
+    var u models.User
+
+	if err := db.DB.Where("username = ?", username).First(&u).Error; err != nil {
+		return u, errors.New(fmt.Sprintf("User not found! %s", err.Error()))
+	}
+	
+	return u, nil
 }

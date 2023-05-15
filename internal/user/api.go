@@ -1,6 +1,9 @@
 package user
 
 import (
+	circleModels "circle-of-life/internal/circle/models"
+	"circle-of-life/internal/core/db"
+	"circle-of-life/internal/user/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,17 +24,21 @@ func Register(c *gin.Context){
 		return
 	}
 
-    u := User{}
+    u := models.User{
+        Username: input.Username,
+        Password: input.Password,
+        Circle: circleModels.Circle{
+            Sectors: []circleModels.Sector{},
+        },
+    }
 
-	u.Username = input.Username
-	u.Password = input.Password
-
-	_,err := u.SaveUser()
+    err := db.DB.Create(&u).Error
 
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
+    db.DB.Save(&u)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "registration success"})
 
@@ -53,7 +60,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	u := User{}
+	u := models.User{}
 
 	u.Username = input.Username
 	u.Password = input.Password
@@ -86,5 +93,5 @@ func CurrentUser(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success", "data": u.ToRepresentation()})
+	c.JSON(http.StatusOK, u.ToRepresentation())
 }

@@ -1,14 +1,22 @@
-package user
+package models
 
 import (
+	"circle-of-life/internal/circle/models"
+	"circle-of-life/internal/core/db"
 	"html"
 	"strings"
-
-	"circle-of-life/internal/core/db"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+
+type User struct {
+	gorm.Model
+	Username string `gorm:"size:255;not null;unique" json:"username"`
+	Password string `gorm:"size:255;not null;" json:"password"`
+    Circle models.Circle `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
 
 
 func (u *User) SaveUser() (*User, error) {
@@ -18,6 +26,7 @@ func (u *User) SaveUser() (*User, error) {
 	if err != nil {
 		return &User{}, err
 	}
+
 	return u, nil
 }
 
@@ -41,7 +50,7 @@ func (u *User) BeforeSave(tx *gorm.DB) error {
 
 func (u *User) ToRepresentation() map[string]interface{} {
     data := map[string]interface{} {
-        "id": u.ID,
+        "id": u.Model.ID,
         "username": u.Username,
         "created_at": u.CreatedAt,
         "updated_at": u.UpdatedAt,
